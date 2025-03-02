@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">TarotCardApp</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="past_readings">Past Readings</string>
+    <string name="no_readings">Your past readings will appear here</string>
+    <string name="your_reading">Your Reading</string>
+    <string name="reading_interpretation">Reading Interpretation</string>
+        <string name="app_title">Tarot Card Reading</string>
+        <string name="ask_your_question">What would you like to know?</string>
+        <string name="start_reading">Start Reading</string>
+        <string name="select_three_cards">Select three cards for your reading</string>
+</resources>
