@@ -5,17 +5,23 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.tarotcardapp.R
 import com.example.tarotcardapp.databinding.ActivityMainBinding
 import android.content.Intent
+import android.graphics.Typeface
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.FrameLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.tarotcardapp.model.data.TarotCard
 import com.example.tarotcardapp.model.repository.TarotRepository
 import com.example.tarotcardapp.presenter.TarotReadingPresenter
 import com.example.tarotcardapp.view.adapter.TarotCardAdapter
 import com.example.tarotcardapp.view.interfaces.TarotReadingView
+import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity(), TarotReadingView {
 
@@ -66,7 +72,7 @@ class MainActivity : AppCompatActivity(), TarotReadingView {
     private fun startReading() {
         val question = binding.editTextQuestion.text.toString()
         if (question.isBlank()) {
-            Toast.makeText(this, "Please enter a question", Toast.LENGTH_SHORT).show()
+            showSnackbar("Please enter a question")
             return
         }
 
@@ -77,6 +83,20 @@ class MainActivity : AppCompatActivity(), TarotReadingView {
     }
 
     private fun onCardClick(card: TarotCard) {
+        val selectedCount = cards.count { it.isSelected }
+
+        // If card is not selected and we already have 3 cards, return
+        if (!card.isSelected && selectedCount >= 3) {
+            showSnackbar("You can only select 3 cards")
+            return
+        }
+
+        val question = binding.editTextQuestion.text.toString()
+        if (question.isBlank()) {
+            showSnackbar("Please enter a question")
+            return
+        }
+
         val updatedCards = cards.map {
             if (it.name_short == card.name_short) {
                 it.copy(isSelected = !it.isSelected)
@@ -90,13 +110,19 @@ class MainActivity : AppCompatActivity(), TarotReadingView {
 
         val selectedCards = updatedCards.filter { it.isSelected }
         if (selectedCards.size == 3) {
-            presenter.onCardSelected(
-                updatedCards,
-                card,
-                binding.editTextQuestion.text.toString()
-            )
+            // Save reading
+            presenter.saveReading(question, selectedCards)
+
+            // Navigate directly to results
+            val intent = Intent(this, ReadingResultActivity::class.java).apply {
+                putExtra("QUESTION", question)
+                putExtra("CARD_NAMES", selectedCards.map { it.name_short }.toTypedArray())
+                putExtra("CARD_REVERSED", selectedCards.map { it.isReversed }.toBooleanArray())
+            }
+            startActivity(intent)
         }
     }
+
 
     override fun showCards(cards: List<TarotCard>) {
         this.cards = cards
@@ -123,11 +149,45 @@ class MainActivity : AppCompatActivity(), TarotReadingView {
     }
 
     override fun showError(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        showSnackbar(message)
     }
 
     override fun onDestroy() {
         presenter.detach()
         super.onDestroy()
+    }
+    override fun onResume() {
+        super.onResume()
+        // Reset the UI to initial state
+        binding.editTextQuestion.setText("")
+        binding.recyclerViewCards.visibility = View.GONE
+        binding.textInstructions.visibility = View.GONE
+        binding.btnStartReading.visibility = View.VISIBLE
+
+        // Reset cards selection
+        cards = cards.map { it.copy(isSelected = false) }
+        cardAdapter.updateCards(cards)
+    }
+    private fun showSnackbar(message: String) {
+        val snackbar = Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT)
+
+        val snackbarView = snackbar.view
+        val params = snackbarView.layoutParams as FrameLayout.LayoutParams
+
+        params.gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
+        params.topMargin = resources.getDimensionPixelOffset(R.dimen.snackbar_margin_top)
+        snackbarView.layoutParams = params
+
+        snackbarView.setBackgroundResource(R.drawable.snackbar_background)
+        val textView = snackbarView.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
+        textView.apply {
+            textAlignment = View.TEXT_ALIGNMENT_CENTER
+            setTextColor(ContextCompat.getColor(context, R.color.mystical_gold))
+            typeface = Typeface.create("Playfair Display", Typeface.NORMAL)
+            textSize = 16f
+            setPadding(32, 16, 32, 16)
+        }
+
+        snackbar.show()
     }
 }

@@ -50,21 +50,28 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnStartReading"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:backgroundTint="@color/mystical_purple"
+        android:backgroundTint="@color/mystical_dark_purple"
         android:fontFamily="serif"
-        android:padding="16dp"
+        android:paddingStart="48dp"
+        android:paddingEnd="48dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
         android:text="@string/start_reading"
-        android:textColor="@color/mystical_light"
-        android:textSize="18sp"
+        android:textColor="@color/mystical_gold"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:letterSpacing="0.1"
+        android:elevation="8dp"
         app:cornerRadius="24dp"
+        app:strokeColor="@color/mystical_gold"
+        app:strokeWidth="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textInputLayoutQuestion"
-        app:rippleColor="@color/mystical_gold" />
-
+        app:rippleColor="@color/mystical_purple" />
     <TextView
         android:id="@+id/textInstructions"
         android:layout_width="0dp"

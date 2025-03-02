@@ -1,6 +1,5 @@
 package com.example.tarotcardapp.view.adapter
 
-
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.tarotcardapp.R
 import com.example.tarotcardapp.model.data.TarotCard
 import com.example.tarotcardapp.utils.ImageUtils
-
 
 class TarotCardAdapter(
     private val showMeaning: Boolean = false,
@@ -39,37 +37,19 @@ class TarotCardAdapter(
 
     inner class CardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val cardImage: ImageView = itemView.findViewById(R.id.imageCard)
-        private val cardName: TextView = itemView.findViewById(R.id.textCardName)
-        private val cardMeaning: TextView = itemView.findViewById(R.id.textCardMeaning)
 
         fun bind(card: TarotCard, showMeaning: Boolean) {
-            // Set card name
-            cardName.text = card.name
-
-            // Show or hide meaning
-            if (showMeaning) {
-                cardMeaning.visibility = View.VISIBLE
-                cardMeaning.text = card.getMeaning()
-            } else {
-                cardMeaning.visibility = View.GONE
-            }
-
-            // Load card image or back
             if (card.isSelected || showMeaning) {
                 ImageUtils.loadCardImage(itemView.context, card, cardImage)
-
-                // If card is reversed, rotate the image
                 cardImage.rotation = if (card.isReversed) 180f else 0f
             } else {
                 ImageUtils.loadCardBackImage(itemView.context, cardImage)
                 cardImage.rotation = 0f
             }
 
-            // Set border for selected cards
             val borderResource = if (card.isSelected) R.drawable.selected_card_border else R.drawable.card_border
             cardImage.setBackgroundResource(borderResource)
 
-            // Set click listener
             itemView.setOnClickListener {
                 onCardClick(card)
             }

@@ -68,6 +68,7 @@ dependencies {
 
     // Coroutines
     implementation (libs.kotlinx.coroutines.android)
+    implementation ("androidx.compose.ui:ui-text-google-fonts:1.5.4")
 
     // ViewModel and LiveData
     implementation (libs.androidx.lifecycle.viewmodel.ktx)

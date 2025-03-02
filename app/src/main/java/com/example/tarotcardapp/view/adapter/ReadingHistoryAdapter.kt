@@ -9,10 +9,12 @@ import com.example.tarotcardapp.R
 import com.example.tarotcardapp.model.data.TarotReading
 import java.text.SimpleDateFormat
 import java.util.Locale
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
+import androidx.core.content.ContextCompat
 
-class ReadingHistoryAdapter(
-    private val onReadingClick: (TarotReading) -> Unit
-) : RecyclerView.Adapter<ReadingHistoryAdapter.ReadingViewHolder>() {
+class ReadingHistoryAdapter(private val onReadingClick: (TarotReading) -> Unit) :
+    RecyclerView.Adapter<ReadingHistoryAdapter.ReadingViewHolder>() {
 
     private var readings: List<TarotReading> = emptyList()
     private val dateFormat = SimpleDateFormat("MMM dd, yyyy - HH:mm", Locale.getDefault())
@@ -38,17 +40,23 @@ class ReadingHistoryAdapter(
     inner class ReadingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val questionText: TextView = itemView.findViewById(R.id.textViewQuestion)
         private val dateText: TextView = itemView.findViewById(R.id.textViewDate)
-        private val cardsText: TextView = itemView.findViewById(R.id.chipGroupCards)
+        private val chipGroup: ChipGroup = itemView.findViewById(R.id.chipGroupCards)
 
         fun bind(reading: TarotReading) {
             questionText.text = reading.question
             dateText.text = dateFormat.format(reading.date)
 
-            // Format cards names
-            val cardNames = reading.selectedCards.joinToString(", ") { it.name }
-            cardsText.text = cardNames
+            // Clear existing chips and add new ones
+            chipGroup.removeAllViews()
+            reading.selectedCards.forEach { card ->
+                val chip = Chip(chipGroup.context).apply {
+                    text = card.name
+                    setTextColor(ContextCompat.getColor(context, R.color.mystical_light))
+                    setChipBackgroundColorResource(R.color.dark_background)
+                }
+                chipGroup.addView(chip)
+            }
 
-            // Set click listener
             itemView.setOnClickListener {
                 onReadingClick(reading)
             }
