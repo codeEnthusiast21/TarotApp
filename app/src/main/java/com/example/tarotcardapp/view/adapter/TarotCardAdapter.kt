@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
+import android.widget.ProgressBar
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tarotcardapp.R
 import com.example.tarotcardapp.model.data.TarotCard
@@ -37,8 +37,11 @@ class TarotCardAdapter(
 
     inner class CardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val cardImage: ImageView = itemView.findViewById(R.id.imageCard)
+        private val progressBar: ProgressBar = itemView.findViewById(R.id.progressBar)
 
         fun bind(card: TarotCard, showMeaning: Boolean) {
+            progressBar.visibility = View.GONE // Hide progress bar completely
+
             if (card.isSelected || showMeaning) {
                 ImageUtils.loadCardImage(itemView.context, card, cardImage)
                 cardImage.rotation = if (card.isReversed) 180f else 0f
@@ -53,6 +56,5 @@ class TarotCardAdapter(
             itemView.setOnClickListener {
                 onCardClick(card)
             }
-        }
-    }
+        }    }
 }
